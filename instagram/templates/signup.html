@@ -1,0 +1,57 @@
+{% extends "default.html" %}
+
+{% block titulo %}
+Cadastro
+{% endblock %}
+
+{% block body %}
+    <section class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+        <div class="col-lg-6 col-md-8 col-sm-10 col-12">
+            <form method="POST" class="bg-light p-4 rounded">
+                {{ form.csrf_token }}
+
+                <div class="mb-3 text-dark">
+                    {{ form.email.label(class="form-label") }}
+                    {{ form.email(class="form-control") }}
+                </div>
+
+                <div class="mb-3 text-dark">
+                    {{ form.username.label(class="form-label") }}
+                    {{ form.username(class="form-control") }}
+                </div>
+
+                <div class="mb-3 text-dark">
+                    {{ form.password.label(class="form-label") }}
+                    {{ form.password(class="form-control") }}
+                </div>
+
+                <div class="mb-3 text-dark">
+                    {{ form.checkPassword.label(class="form-label") }}
+                    {{ form.checkPassword(class="form-control") }}
+                </div>
+
+                {{ form.btn(class="btn btn-primary w-100 mt-3") }}
+            </form>
+
+            <div class="mt-4 text-center">
+                <small class="mb-0">Já tem uma conta? <a href="{{ url_for('homepage') }}" class="text-decoration-none bg-light badge text-dark">Faça login</a></small>
+            </div>
+        </div>
+    </section>
+    <script>
+        {% if error %}
+            Toastify({
+              text: "{{ error }}",
+              duration: 3000,
+              close: true,
+              gravity: "top",
+              position: "right",
+              stopOnFocus: true,
+              style: {
+                background: "#dc3545",
+                boxShadow: "0 0 10px #dc3545"
+              }
+            }).showToast();
+        {% endif %}
+    </script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "default.html" %}
+
+{% block titulo %}
+    {{ user.username }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="text-center mb-4 pt-2">
+            {% if user.id == current_user.id %}
+                <h1 class="fw-bold">Seu perfil</h1>
+            {% else %}
+                <h1 class="text-center mb-4 h3 pt-2">Perfil de:
+                    <span class="fw-bold">{{ user.username }}</span>
+                </h1>
+            {% endif %}
+        </div>
+
+        <div class="d-flex justify-content-center mb-4 gap-3">
+            <a href="{{ url_for('homepage') }}" class="btn btn-primary">Voltar</a>
+            {% if user.id != current_user.id %}
+                {% if is_following %}
+                    <form action="{{ url_for('unfollow', user_id=user.id) }}" method="POST">
+                        {{ formUnfollow.csrf_token }}
+                        {{ formUnfollow.btn(class="btn btn-secondary") }}
+                    </form>
+                {% else %}
+                    <form action="{{ url_for('follow', user_id=user.id) }}" method="POST">
+                        {{ formFollow.csrf_token }}
+                        {{ formFollow.btn(class="btn btn-success") }}
+                    </form>
+                {% endif %}
+
+                {% if has_blocked %}
+                    <form action="{{ url_for('unblock', user_id=user.id) }}" method="POST">
+                        {{ formUnblock.csrf_token }}
+                        {{ formUnblock.btn(class="btn btn-secondary") }}
+                    </form>
+                {% else %}
+                    <form action="{{ url_for('block', user_id=user.id) }}" method="POST">
+                        {{ formBlock.csrf_token }}
+                        {{ formBlock.btn(class="btn btn-danger") }}
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        {% if form %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title">Criar publicação</h4>
+
+                    <form method="post" enctype="multipart/form-data">
+                        {{ form.csrf_token }}
+
+                        <div class="mb-3">
+                            {{ form.text.label(class="form-label") }}
+                            {{ form.text(class="form-control") }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.photo.label(class="form-label") }}
+                            {{ form.photo(class="form-control") }}
+                        </div>
+
+                        {{ form.btn(class="btn btn-primary") }}
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if is_blocked == False and has_blocked == False or user.id == current_user.id %}
+            {% for post in posts %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="card-text">{{ post.post_text }}</p>
+                        <img src="{{ url_for('static', filename='fotos_dos_posts/{}'.format(post.post_img) ) }}" class="img-fluid" alt="Post Image">
+                    </div>
+                </div>
+            {% endfor %}
+        {% elif is_blocked == True %}
+            <div class="alert alert-danger text-center" role="alert" style="max-width: 350px; margin: 20px auto;">
+                Você foi bloqueado por este usuário.
+            </div>
+        {% elif has_blocked == True %}
+            <div class="alert alert-danger text-center" role="alert" style="max-width: 350px; margin: 20px auto;">
+                Você bloqueou este usuário.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

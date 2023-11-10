@@ -26,7 +26,14 @@ def homepage():
         blockedByArr = Block.query.filter_by(blocked_id=current_user.id).all()
 
         for following in followingArr:
-            if following.following_id not in blockedByArr:
+            hasBlocked = False
+
+            for blocked in blockedByArr:
+                if following.following_id == blocked.blocker_id:
+                    hasBlocked = True
+                    break
+
+            if not hasBlocked:
                 posts += Posts.query.filter_by(user_id=following.following_id).all()
 
         posts += Posts.query.filter_by(user_id=current_user.id).all()
